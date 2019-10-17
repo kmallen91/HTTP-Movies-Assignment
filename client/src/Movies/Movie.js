@@ -32,6 +32,16 @@ export default class Movie extends React.Component {
     addToSavedList(this.state.movie);
   };
 
+  handleDelete = e => {
+    
+    axios
+      .delete(`http://localhost:5000/api/movies/${this.state.movie.id}`)
+      .then(res => {
+        this.props.updateMovie(res.data)
+        this.props.history.push('/movies')
+      })
+      .catch(err => console.log(err.response))
+  }
   
 
   render() {
@@ -46,7 +56,7 @@ export default class Movie extends React.Component {
           Save
         </div>
         <button className='update-button' onClick={() => this.props.history.push(`/update-movie/${this.props.match.params.id}`)}> Update </button>
-        <button className='delete-button'>Delete</button>
+        <button className='delete-button' onClick={this.handleDelete}>Delete</button>
       </div>
     );
   }
