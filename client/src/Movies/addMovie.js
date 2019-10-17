@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import axios from 'axios'
 
 const initialMovie = {
@@ -8,17 +8,9 @@ const initialMovie = {
     stars: []
 }
 
-const UpdateMovie = props => {
+const AddMovie = props => {
 
     const [movie, setMovie] = useState(initialMovie)
-    useEffect(() => {
-        console.log(props)
-        const movieToEdit = props.movies.movies.find(
-            movie => `${movie.id}` === props.match.params.id
-          );
-        
-        if (movieToEdit) setMovie(movieToEdit)
-    }, [ props.match.params.id])
 
     const changeHandler = ev => {
         ev.persist();
@@ -30,14 +22,14 @@ const UpdateMovie = props => {
       };
 
     const formSubmit = e => {
-        e.preventDefault()
         const stars = Array.isArray(movie.stars) ? movie.stars : movie.stars.split(',')
         const updatedMovie = {...movie, stars }
+        
         axios
-            .put(`http://localhost:5000/api/movies/${movie.id}`, updatedMovie)
+            .post(`http://localhost:5000/api/movies`, updatedMovie)
             .then (res => {
                 console.log(res)
-                props.UpdateMovie(res.data)
+                props.setMovie(res.data)
                 props.history.push('/')
             })
             .catch(err => console.log(err.response))
@@ -45,7 +37,7 @@ const UpdateMovie = props => {
 
     return (
         <div>
-            <h2>Update Movie</h2>
+            <h2>Add a Movie</h2>
 
             <form className='form-container' onSubmit={formSubmit}>
                 <label className="movie-title">
@@ -66,10 +58,10 @@ const UpdateMovie = props => {
                     
                 </label>
 
-                <button className="submit-button" >Update Movie</button>
+                <button className="submit-button" >Add Movie</button>
             </form>
         </div>
     )
 }
 
-export default UpdateMovie
+export default AddMovie
